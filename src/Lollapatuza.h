@@ -21,13 +21,23 @@ public:
     Puestos puestos();
 
 private:
+
     Puestos _puestos;  //map<int, puesto>
     set<IdPuesto> _conjPuestos;
     Personas _personas; //conj(int)
     map<Persona, Nat> _historialCompras;
-    map<Persona, map<Producto, minHeap(IdPuesto)>> _puestosHackeables;
-    priority_queue<Persona> _rankingGastosPersonas;
-    map<Persona, Nat> _posicionEnCola;
+    map<Persona, map<Producto, colaPrior<IdPuesto>>> _puestosHackeables; //veamos como hacer el minHeap => -1 vs comparator
+    colaPrior<Persona> _rankingGastosPersonas; //la creamos con ranking
+    //map<Persona, Nat> _posicionEnCola;
+
+    // para comparar dos personas
+    class ranking {
+        public:
+            int operator() (const Persona& a1, const Persona& a2)
+            {
+                return this->gastoTotalPersona(a1) > this->gastoTotalPersona(a2);
+            }
+    };
 };
 
 #include "Lollapatuza.cpp"
