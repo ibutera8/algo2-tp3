@@ -3,6 +3,8 @@
 
 #include <set>
 #include "tipos.h"
+#include "Lollapatuza.h"
+#include "PuestosDeComida.h"
 
 
 class FachadaLollapatuza {
@@ -37,6 +39,8 @@ private:
         Lollapatuza lolla;
 
     */
+
+    lollapatuza<int> _lolla;
 
 };
 

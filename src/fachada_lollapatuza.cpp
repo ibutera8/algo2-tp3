@@ -1,24 +1,26 @@
 #include "fachada_lollapatuza.h"
+#include "Lollapatuza.h"
+#include "PuestosDeComida.h"
 
 
 FachadaLollapatuza::FachadaLollapatuza(const set<Persona> &personas, const map<IdPuesto, aed2_Puesto> &infoPuestos) {
-    // TODO: Completar
+    _lolla = lollapatuza(infoPuestos, personas);
 }
 
 void FachadaLollapatuza::registrarCompra(Persona persona, Producto producto, Nat cant, IdPuesto idPuesto) {
-    // TODO: Completar
+    _lolla.registrarCompra(persona, producto, idPuesto, cant);
 }
 
 void FachadaLollapatuza::hackear(Persona persona, Producto producto) {
-    // TODO: Completar
+    _lolla.hackear(persona, producto);
 }
 
 Nat FachadaLollapatuza::gastoTotal(Persona persona) const {
-    // TODO: Completar
+    //
 }
 
 Persona FachadaLollapatuza::mayorGastador() const {
-    // TODO: Completar
+    return _lolla.personaQueMasGasto();
 }
 
 IdPuesto FachadaLollapatuza::menorStock(Producto producto) const {

@@ -16,7 +16,7 @@ public:
     Nat obtenerDescuentoItem(Producto p, Nat cant);
     Nat gastoPersonaPuesto(Persona a);
     void modificarStock(bool reponer, Producto p, Nat cant);
-    void modificarVentas(bool reponer, Nat a, Producto p, Nat cant);
+    void modificarVentas(bool reponer, Producto p, Nat cant, Persona a);
     set<Nat> claves(map<Nat, Nat> dicc);
     set<Nat> significados(map<Nat, Nat> dicc);
 private:
