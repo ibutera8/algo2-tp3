@@ -9,36 +9,59 @@
 #include "PuestosDeComida.h"
 
 template<typename T>
-puestosDeComida<T>::puestosDeComida(Stock s ,Menu m , Promociones p) {
-    _stock = s;
-    _menu = m;
-    _promociones = p;
-    map<int, vector<Nat>> promosDiccConArreglo;
-    for (int i = 0; i < p.size(); i++) {
-        Nat ultimoDescuentoDefinido = 0;
-        vector<Nat> cantidadesPromoItem;
-        for (int j = 0; j < p[i].size(); j++) {
-            cantidadesPromoItem.push_back(p[i][j]);
-        }
-        Nat maxCant = cantidadesPromoItem[0];
-        for (int j = 1; j < cantidadesPromoItem.size(); j++){
-            if (cantidadesPromoItem[j] > maxCant){
-                maxCant = cantidadesPromoItem[j];
+puestosDeComida<T>::puestosDeComida(aed2_Puesto& puesto) {
+    _stock = puesto.stock;
+    _menu = puesto.menu;
+    _promociones = puesto.promociones;
+
+    //tenemos que recorrer todo el dicc _promociones
+    //primero lo recorremos por producto, y luego vamos llenando los huecos:
+    for (pair<Producto, map<Cant, Descuento>> par : _promociones){
+        int prod = par.first;
+        Nat ultimaCantDefinida = 0;
+        //busco el maximo de las claves del dicc de promos para el producto actual
+        for (pair<Cant, Descuento> promo : _promociones[prod]) {
+            if (promo.first > ultimaCantDefinida) {
+                ultimaCantDefinida = promo.first;
             }
         }
-        vector<Nat> arrDescuentos(maxCant, 0);
-        for (int k = 0; k < maxCant; k++){
-            for (int l = 0; l < cantidadesPromoItem.size(); l++) {
-                if (cantidadesPromoItem[l] = k){
-                    ultimoDescuentoDefinido = p[i][k];
-                }
-                arrDescuentos[k] = ultimoDescuentoDefinido;
+        //defino los huecos
+        Nat ultimoDescDefinido = 0;
+        for(int i = 0; i <= ultimaCantDefinida; i++) {
+            if (_promociones[prod].count(i) == 1) {
+                //en la pos i no tenog hueco, me agarro el descuento
+                ultimoDescDefinido = _promociones[prod][i];
+            } else {
+                //en la pos i tengo hueco, lo lleno con el ultimo descuento definido
+                _promociones[prod][i] = ultimoDescDefinido;
             }
         }
-        promosDiccConArreglo[i] = arrDescuentos;
     }
-    //_ventas =
-    //_ventasSinPromo =
+    
+    // map<int, vector<Nat>> promosDiccConArreglo;
+    // for (int i = 0; i < p.size(); i++) {
+    //     Nat ultimoDescuentoDefinido = 0;
+    //     vector<Nat> cantidadesPromoItem;
+    //     for (int j = 0; j < p[i].size(); j++) {
+    //         cantidadesPromoItem.push_back(p[i][j]);
+    //     }
+    //     Nat maxCant = cantidadesPromoItem[0];
+    //     for (int j = 1; j < cantidadesPromoItem.size(); j++){
+    //         if (cantidadesPromoItem[j] > maxCant){
+    //             maxCant = cantidadesPromoItem[j];
+    //         }
+    //     }
+    //     vector<Nat> arrDescuentos(maxCant, 0);
+    //     for (int k = 0; k < maxCant; k++){
+    //         for (int l = 0; l < cantidadesPromoItem.size(); l++) {
+    //             if (cantidadesPromoItem[l] = k){
+    //                 ultimoDescuentoDefinido = p[i][k];
+    //             }
+    //             arrDescuentos[k] = ultimoDescuentoDefinido;
+    //         }
+    //     }
+    //     promosDiccConArreglo[i] = arrDescuentos;
+    // }
 }
 
 template<typename T>
@@ -46,30 +69,41 @@ puestosDeComida<T>::~puestosDeComida(){}
 
 template<typename T>
 Nat puestosDeComida<T>::obtenerStock(Producto p){
-    return this-> _stock(p);
+    return this-> _stock[p];
 }
 
 template<typename T>
 Nat puestosDeComida<T>::obtenerDescuentoItem(Producto p, Nat cant){
-    return this-> _promociones(p)(cant);
+    return this-> _promociones[p][cant];
 }
 
 template<typename T>
 Nat puestosDeComida<T>::gastoPersonaPuesto(Persona a){
-    return this -> _ventas(a);
+    Nat res;
+    _ventas.count(a) == 1 ? res = _ventas[a] : res = 0;
+    return res;
 }
+
+template<typename T>
+Nat puestosDeComida<T>::valorItemEnMenu(Producto p){
+    return this->_menu[p];
+}
+
+template<typename T>
+Nat puestosDeComida<T>::cantVentasSinPromo(Producto p, Persona a){
+    return this->_ventasSinPromo[p][a];
+}
+
 
 template<typename T>
 void puestosDeComida<T>::modificarStock(bool reponer, Producto p, Nat cant){
 
     if (reponer) {
-        _stock[p] = obtenerStock(p) + cant;
+        _stock[p] += cant;
     } else {
-        _stock[p] = obtenerStock(p) - cant;
+        _stock[p] -= cant;
     }
 }
-
-
 
 
 
@@ -78,24 +112,49 @@ void puestosDeComida<T>::modificarVentas(bool reponer, Producto p, Nat cant, Per
 
     Nat  ventaVieja = gastoPersonaPuesto(a);
     Nat descuento = obtenerDescuentoItem(p,cant);
-    //Nat gastado = _menu[p]*cant*(div(100-descuento,100));
+    Nat gastado = (_menu[p] * cant) * ((100 - descuento)/100); //esto me da la division entera
 
     if (reponer) {
         Nat ventaNueva = ventaVieja + gastado;
-        gastoPersonaPuesto(a) = gastoPersonaPuesto(a) + ventaNueva;
+        _ventas[a] = ventaNueva;
 
-        if (obtenerDescuentoItem(p,cant) == 0) {
-            if ( this-> _ventasSinPromo(p)[a].count == 0 ) {
-                this -> _ventasSinPromo(p)[a,cant];
+        if (descuento == 0) {
+            if ( this-> _ventasSinPromo[p].count(a) == 0 ) {
+                //lo defino 
+                this -> _ventasSinPromo[p][a] = cant;
+            } else {
+                //ya etsa definido, le sumo
+                _ventasSinPromo[p][a] += cant;
             }
+        }
+    } else {
+        Nat ventaNueva = ventaVieja - gastado;
+        _ventas[a] = ventaNueva;
+        
+        if(descuento == 0) {
+            _ventasSinPromo[p][a] -= cant;
+        }
+
+        if(_ventasSinPromo[p][a] == 0){
+            _ventasSinPromo[p].erase(a);
+        }
+
+        if(_ventasSinPromo[p].size() == 0) {
+            _ventasSinPromo.erase(p);
         }
     }
 
+    // if (reponer) {
+    //     _ventas[p] = obtenerStock(p) + cant;
+    // } else {
 
+    // }
+}
 
-    if (reponer) {
-        _ventas[p] = obtenerStock(p) + cant;
-    } else {
-
+template<typename T>
+void puestosDeComida<T>::actualizarHackeabilidadPuesto(Persona a) {
+    if (_ventas[a] == 0){
+         _ventas.erase(a);
     }
+
 }

@@ -1,10 +1,8 @@
 #ifndef FACHADA_LOLLAPATUZA_H
 #define FACHADA_LOLLAPATUZA_H
 
-#include <set>
-#include "tipos.h"
-#include "Lollapatuza.h"
-#include "PuestosDeComida.h"
+
+#include "Lollapatuza.cpp"
 
 
 class FachadaLollapatuza {

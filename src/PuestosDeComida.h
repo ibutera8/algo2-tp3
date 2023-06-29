@@ -10,15 +10,18 @@ template<typename T>
 class puestosDeComida {
 
 public:
-    puestosDeComida(Stock s ,Menu m , Promociones p);
+    puestosDeComida(aed2_Puesto& puesto);
     ~puestosDeComida();
     Nat obtenerStock(Producto p);
     Nat obtenerDescuentoItem(Producto p, Nat cant);
     Nat gastoPersonaPuesto(Persona a);
+    Nat valorItemEnMenu(Producto p);
+    Nat cantVentasSinPromo(Producto p, Persona a);
     void modificarStock(bool reponer, Producto p, Nat cant);
     void modificarVentas(bool reponer, Producto p, Nat cant, Persona a);
-    set<Nat> claves(map<Nat, Nat> dicc);
-    set<Nat> significados(map<Nat, Nat> dicc);
+    void actualizarHackeabilidadPuesto(Persona a);
+    //set<Nat> claves(map<Nat, Nat> dicc);
+    //set<Nat> significados(map<Nat, Nat> dicc);
 private:
     Menu _menu;
     Stock _stock;
@@ -28,6 +31,6 @@ private:
 
 };
 
-#include "PuestosDeComida.cpp"
+//#include "PuestosDeComida.cpp"
 
 #endif //TP_LOLLA_PuestosDeComida_H
