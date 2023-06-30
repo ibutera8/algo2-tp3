@@ -8,8 +8,7 @@
 #include "tipos.h"
 #include "PuestosDeComida.h"
 
-template<typename T>
-puestosDeComida<T>::puestosDeComida(aed2_Puesto& puesto) {
+puestosDeComida::puestosDeComida(aed2_Puesto& puesto) {
     _stock = puesto.stock;
     _menu = puesto.menu;
     _promociones = puesto.promociones;
@@ -64,39 +63,32 @@ puestosDeComida<T>::puestosDeComida(aed2_Puesto& puesto) {
     // }
 }
 
-template<typename T>
-puestosDeComida<T>::~puestosDeComida(){}
+puestosDeComida::~puestosDeComida(){}
 
-template<typename T>
-Nat puestosDeComida<T>::obtenerStock(Producto p){
+Nat puestosDeComida::obtenerStock(Producto p){
     return this-> _stock[p];
 }
 
-template<typename T>
-Nat puestosDeComida<T>::obtenerDescuentoItem(Producto p, Nat cant){
+Nat puestosDeComida::obtenerDescuentoItem(Producto p, Nat cant){
     return this-> _promociones[p][cant];
 }
 
-template<typename T>
-Nat puestosDeComida<T>::gastoPersonaPuesto(Persona a){
+Nat puestosDeComida::gastoPersonaPuesto(Persona a){
     Nat res;
     _ventas.count(a) == 1 ? res = _ventas[a] : res = 0;
     return res;
 }
 
-template<typename T>
-Nat puestosDeComida<T>::valorItemEnMenu(Producto p){
+Nat puestosDeComida::valorItemEnMenu(Producto p){
     return this->_menu[p];
 }
 
-template<typename T>
-Nat puestosDeComida<T>::cantVentasSinPromo(Producto p, Persona a){
+Nat puestosDeComida::cantVentasSinPromo(Producto p, Persona a){
     return this->_ventasSinPromo[p][a];
 }
 
 
-template<typename T>
-void puestosDeComida<T>::modificarStock(bool reponer, Producto p, Nat cant){
+void puestosDeComida::modificarStock(bool reponer, Producto p, Nat cant){
 
     if (reponer) {
         _stock[p] += cant;
@@ -106,9 +98,7 @@ void puestosDeComida<T>::modificarStock(bool reponer, Producto p, Nat cant){
 }
 
 
-
-template<typename T>
-void puestosDeComida<T>::modificarVentas(bool reponer, Producto p, Nat cant, Persona a){
+void puestosDeComida::modificarVentas(bool reponer, Producto p, Nat cant, Persona a){
 
     Nat  ventaVieja = gastoPersonaPuesto(a);
     Nat descuento = obtenerDescuentoItem(p,cant);
@@ -151,8 +141,7 @@ void puestosDeComida<T>::modificarVentas(bool reponer, Producto p, Nat cant, Per
     // }
 }
 
-template<typename T>
-void puestosDeComida<T>::actualizarHackeabilidadPuesto(Persona a) {
+void puestosDeComida::actualizarHackeabilidadPuesto(Persona a) {
     if (_ventas[a] == 0){
          _ventas.erase(a);
     }

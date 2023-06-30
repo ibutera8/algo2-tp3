@@ -38,7 +38,8 @@ private:
 
     */
 
-    lollapatuza<int> _lolla;
+    lollapatuza _lolla;
+    puestosDeComida *_puesto;
 
 };
 

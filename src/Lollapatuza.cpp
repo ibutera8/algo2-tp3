@@ -3,8 +3,9 @@
 //#include "PuestosDeComida.cpp"
 //#include "PuestosDeComida.h"
 
-template<typename T>
-lollapatuza<T>::lollapatuza(Puestos p , Personas a) {
+lollapatuza::lollapatuza() {}
+
+lollapatuza::lollapatuza(Puestos p , Personas a) {
     //defino las variables privadas pasadas por parametro
     _puestos = p;
     _personas = a;
@@ -15,12 +16,10 @@ lollapatuza<T>::lollapatuza(Puestos p , Personas a) {
 
 }
 
-template<typename T>
-lollapatuza<T>::~lollapatuza(){}
+lollapatuza::~lollapatuza(){}
 
-template<typename T>
-void lollapatuza<T>::registrarCompra(Persona a, Producto p, IdPuesto id, Nat cant){
-    puestosDeComida<T> puesto = _puestos[id];
+void lollapatuza::registrarCompra(Persona a, Producto p, IdPuesto id, Nat cant){
+    puestosDeComida puesto = _puestos[id];
     puesto.modificarStock(false, p, cant);
     puesto.modificarVentas(true, p, cant, a);
     Nat descuento = puesto.obtenerDescuentoItem(p, cant);
@@ -32,10 +31,9 @@ void lollapatuza<T>::registrarCompra(Persona a, Producto p, IdPuesto id, Nat can
     this->actualizarRanking(a);
 }
 
-template<typename T>
-void lollapatuza<T>::hackear(Persona a, Producto p){
+void lollapatuza::hackear(Persona a, Producto p){
     int puid = -1 * _puestosHackeables[a][p].top(); //multiplicaba por -1 para obtener el id original
-    puestosDeComida<T> puesto = _puestos[puid];
+    puestosDeComida puesto = _puestos[puid];
     puesto.modificarStock(true, p, 1);
     puesto.modificarVentas(false, p, 1, a);
 
@@ -45,9 +43,8 @@ void lollapatuza<T>::hackear(Persona a, Producto p){
     this->actualizarRanking(a);
 }
 
-template<typename T>
-void lollapatuza<T>::actualizarHackeabilidad(Persona a, Producto p, IdPuesto pid){
-    puestosDeComida<T> puesto = _puestos[pid];
+void lollapatuza::actualizarHackeabilidad(Persona a, Producto p, IdPuesto pid){
+    puestosDeComida puesto = _puestos[pid];
     if (puesto.cantVentasSinPromo(p, a) == 0){
         this->_puestosHackeables[a][p].pop();
     }
@@ -66,31 +63,29 @@ void lollapatuza<T>::actualizarHackeabilidad(Persona a, Producto p, IdPuesto pid
     puesto.actualizarHackeabilidadPuesto(a);
 }
 
-template<typename T>
-void lollapatuza<T>::actualizarRanking(Persona a){
+void lollapatuza::actualizarRanking(Persona a){
     this->_rankingGastosPersonas.remove(a);
     this->_rankingGastosPersonas.push(a);
 }
 
 
-template<typename T>
-Nat lollapatuza<T>::gastoTotalPersona(Persona a){
+Nat lollapatuza::gastoTotalPersona(Persona a){
     return this->_historialCompras[a];
 }
 
-template<typename T>
-Persona lollapatuza<T>::personaQueMasGasto() const{
+
+Persona lollapatuza::personaQueMasGasto() const{
     return this->_rankingGastosPersonas.top();
 }
 
 
 //revisar esta para que devuelva el id de puesto
 //ahora esta devolviendo la posicion en el dicc
-template<typename T>
-IdPuesto lollapatuza<T>::puestoMenorStock(Producto i){
+
+IdPuesto lollapatuza::puestoMenorStock(Producto i){
     IdPuesto res = 0;
     Nat menorStock = 0;
-    for (pair<IdPuesto, puestosDeComida<T>> par : _puestos) {
+    for (pair<IdPuesto, puestosDeComida> par : _puestos) { // Acá se rompe con el tipo de dato de par y el de _puestos
         if (stockEnPuesto(par.first, i) < menorStock) {
             res = par.first;
             menorStock = stockEnPuesto(par.first, i);
@@ -109,38 +104,37 @@ IdPuesto lollapatuza<T>::puestoMenorStock(Producto i){
     return res;*/
 }
 
-template<typename T>
-set<Persona> lollapatuza<T>::personas(){
-    return this->_personas;
+
+set<Persona> lollapatuza::personas(){
+    return _personas;
 }
 
 
 //tiene que devolver las claves del diccionario _puestos
-template<typename T>
-set<IdPuesto> lollapatuza<T>::puestos(){
+
+set<IdPuesto> lollapatuza::puestos(){
     set<IdPuesto> claves = set<int>();
-    for (pair<IdPuesto, puestosDeComida<T>> par : this->_puestos) {
+    for (pair<IdPuesto, puestosDeComida> par : this->_puestos) { // Acá se rompe con el tipo de dato de par y el de _puestos
         claves.insert(par.first);
     }
     return claves;
 }
 
-template<typename T>
-Nat lollapatuza<T>::stockEnPuesto(IdPuesto idPuesto, const Producto &producto) {
-    puestosDeComida<T> puesto = _puestos[idPuesto];
+
+Nat lollapatuza::stockEnPuesto(IdPuesto idPuesto, const Producto &producto) {
+    puestosDeComida puesto = _puestos[idPuesto];
     return puesto.obtenerStock(producto);
 }
 
 
-template<typename T>
-Nat lollapatuza<T>::descuentoEnPuesto(IdPuesto idPuesto, const Producto &producto, Nat cantidad) {
-    puestosDeComida<T> puesto = _puestos[idPuesto];
+Nat lollapatuza::descuentoEnPuesto(IdPuesto idPuesto, const Producto &producto, Nat cantidad) {
+    puestosDeComida puesto = _puestos[idPuesto];
     return puesto.obtenerDescuentoItem(producto, cantidad);
 }
 
 
-template<typename T>
-Nat lollapatuza<T>::gastoEnPuesto(IdPuesto idPuesto, Persona persona) {
-    puestosDeComida<T> puesto = _puestos[idPuesto];
+
+Nat lollapatuza::gastoEnPuesto(IdPuesto idPuesto, Persona persona) {
+    puestosDeComida puesto = _puestos[idPuesto];
     return puesto.gastoPersonaPuesto(persona);
 }

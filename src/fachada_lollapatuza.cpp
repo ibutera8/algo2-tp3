@@ -1,8 +1,11 @@
 #include "fachada_lollapatuza.h"
+#include "Lollapatuza.h"
+#include "PuestosDeComida.h"
 
 
-
-FachadaLollapatuza::FachadaLollapatuza(const set<Persona> &personas, const map<IdPuesto, aed2_Puesto> &infoPuestos) : _lolla(lollapatuza<int>(infoPuestos, personas)) {}
+FachadaLollapatuza::FachadaLollapatuza(const set<Persona> &personas, const map<IdPuesto, aed2_Puesto> &infoPuestos) {
+    _lolla = lollapatuza(infoPuestos, personas);
+}
 
 void FachadaLollapatuza::registrarCompra(Persona persona, Producto producto, Nat cant, IdPuesto idPuesto) {
     _lolla.registrarCompra(persona, producto, idPuesto, cant);
@@ -21,7 +24,7 @@ Persona FachadaLollapatuza::mayorGastador() const {
 }
 
 IdPuesto FachadaLollapatuza::menorStock(Producto producto) const {
-   return _lolla.puestoMenorStock(producto);
+    return _lolla.puestoMenorStock(producto);
 }
 
 const set<Persona> &FachadaLollapatuza::personas() const {
@@ -41,5 +44,10 @@ Nat FachadaLollapatuza::gastoEnPuesto(IdPuesto idPuesto, Persona persona) const 
 }
 
 set<IdPuesto> FachadaLollapatuza::idsDePuestos() const {
-    return _lolla.puestos();
+    Puestos puestos = _lolla.puestos();
+    set<IdPuesto> ids;
+    for (const auto& par : puestos) {
+        ids.insert(par.first);
+    }
+    return ids;
 }

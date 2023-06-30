@@ -7,10 +7,10 @@
 
 using namespace std;
 
-template<typename T>
 class lollapatuza {
 
 public:
+    lollapatuza();
     lollapatuza(Puestos p , Personas a);
     ~lollapatuza();
     void registrarCompra(Persona a, Producto p, IdPuesto id, Nat cant);
@@ -34,6 +34,7 @@ private:
     map<Persona, map<Producto, priority_queue<IdPuesto>>> _puestosHackeables; //veamos como hacer el minHeap => -1 vs comparator
 
     // para comparar dos personas
+    template<typename T>
     class ranking {
         public:
             bool operator() (const Persona& a1, const Persona& a2){
@@ -46,9 +47,11 @@ private:
                 }
             };
         private:
-            lollapatuza<T> l;
+            lollapatuza l; // Según busqué, este error es por la "declaración anticipada" de lollapatuza.
+                           // Como solución habría que mover toda esta clase fuera de la clase lollapatuza
     };
     //me da una cola de prioridad con la operacion borrar cualquier elemento de la cola
+    template<typename T>
     class colaRankingPersonas : public priority_queue<Persona , vector<Persona>, ranking> {
     public:
         bool remove(const T& value) {
