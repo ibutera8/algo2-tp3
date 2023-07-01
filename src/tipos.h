@@ -35,4 +35,6 @@ struct aed2_Puesto {
 
 using Puestos = map<int , aed2_Puesto>;
 
+
+
 #endif //SOLUCION_TIPOS_H

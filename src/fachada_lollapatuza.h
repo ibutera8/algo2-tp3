@@ -39,7 +39,7 @@ private:
     */
 
     lollapatuza _lolla;
-    puestosDeComida *_puesto;
+    //puestosDeComida *_puesto;
 
 };
 

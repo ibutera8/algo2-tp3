@@ -1,6 +1,6 @@
 #include "fachada_lollapatuza.h"
-#include "Lollapatuza.h"
-#include "PuestosDeComida.h"
+//#include "Lollapatuza.h"
+//#include "PuestosDeComida.h"
 
 
 FachadaLollapatuza::FachadaLollapatuza(const set<Persona> &personas, const map<IdPuesto, aed2_Puesto> &infoPuestos) {
@@ -44,10 +44,10 @@ Nat FachadaLollapatuza::gastoEnPuesto(IdPuesto idPuesto, Persona persona) const 
 }
 
 set<IdPuesto> FachadaLollapatuza::idsDePuestos() const {
-    Puestos puestos = _lolla.puestos();
+    set<IdPuesto> puestos = _lolla.puestos();
     set<IdPuesto> ids;
-    for (const auto& par : puestos) {
-        ids.insert(par.first);
+    for (const auto& id : puestos) {
+        ids.insert(id);
     }
     return ids;
 }

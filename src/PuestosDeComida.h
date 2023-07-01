@@ -9,7 +9,7 @@ using namespace std;
 class puestosDeComida {
 
 public:
-    puestosDeComida(aed2_Puesto& puesto);
+    puestosDeComida(aed2_Puesto puesto);
     ~puestosDeComida();
     Nat obtenerStock(Producto p);
     Nat obtenerDescuentoItem(Producto p, Nat cant);

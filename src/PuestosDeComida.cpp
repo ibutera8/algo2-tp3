@@ -5,10 +5,10 @@
 #include <queue>
 #include <set>
 #include <algorithm> // Todavía no sabemos si se puede usar
-#include "tipos.h"
+
 #include "PuestosDeComida.h"
 
-puestosDeComida::puestosDeComida(aed2_Puesto& puesto) {
+puestosDeComida::puestosDeComida(aed2_Puesto puesto) {
     _stock = puesto.stock;
     _menu = puesto.menu;
     _promociones = puesto.promociones;
