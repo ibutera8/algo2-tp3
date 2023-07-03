@@ -1,7 +1,5 @@
-
 #include "Lollapatuza.h"
-//#include "PuestosDeComida.cpp"
-//#include "PuestosDeComida.h"
+
 
 lollapatuza::lollapatuza() {}
 
@@ -12,7 +10,7 @@ lollapatuza::lollapatuza(Puestos p , Personas a) {
     for (pair<Nat, aed2_Puesto> par : p) {
         Nat pid = par.first;
         puestosDeComida puesto = puestosDeComida(par.second);
-        _puestos[pid] = puesto;
+        _puestos.insert({pid, puesto});
     }
     //inicializo los gastos por persona en 0
     for (Persona persona : a) {
@@ -23,7 +21,7 @@ lollapatuza::lollapatuza(Puestos p , Personas a) {
 
 lollapatuza::~lollapatuza(){}
 
-void lollapatuza::registrarCompra(Persona a, Producto p, IdPuesto id, Nat cant){
+void lollapatuza::registrarCompraLolla(Persona a, Producto p, IdPuesto id, Nat cant){
     puestosDeComida puesto = _puestos[id];
     puesto.modificarStock(false, p, cant);
     puesto.modificarVentas(true, p, cant, a);
@@ -33,10 +31,10 @@ void lollapatuza::registrarCompra(Persona a, Producto p, IdPuesto id, Nat cant){
     if (descuento == 0){
         this->_puestosHackeables[a][p].push(-1* id); //multiplicaba por -1 porque asi armamos el minHeap
     }
-    this->actualizarRanking(a);
+    this->actualizarRankingLolla(a);
 }
 
-void lollapatuza::hackear(Persona a, Producto p){
+void lollapatuza::hackearLolla(Persona a, Producto p){
     int puid = -1 * _puestosHackeables[a][p].top(); //multiplicaba por -1 para obtener el id original
     puestosDeComida puesto = _puestos[puid];
     puesto.modificarStock(true, p, 1);
@@ -44,11 +42,11 @@ void lollapatuza::hackear(Persona a, Producto p){
 
     int gastado = puesto.valorItemEnMenu(p);
     _historialCompras[a] -= gastado;
-    this->actualizarHackeabilidad(a, p, puid);
-    this->actualizarRanking(a);
+    this->actualizarHackeabilidadLolla(a, p, puid);
+    this->actualizarRankingLolla(a);
 }
 
-void lollapatuza::actualizarHackeabilidad(Persona a, Producto p, IdPuesto pid){
+void lollapatuza::actualizarHackeabilidadLolla(Persona a, Producto p, IdPuesto pid){
     puestosDeComida puesto = _puestos[pid];
     if (puesto.cantVentasSinPromo(p, a) == 0){
         this->_puestosHackeables[a][p].pop();
@@ -68,19 +66,19 @@ void lollapatuza::actualizarHackeabilidad(Persona a, Producto p, IdPuesto pid){
     puesto.actualizarHackeabilidadPuesto(a);
 }
 
-void lollapatuza::actualizarRanking(Persona a){
-    pair<Nat, Persona> valor = make_pair(gastoTotalPersona(a), -1 * a);
+void lollapatuza::actualizarRankingLolla(Persona a){
+    pair<Nat, Persona> valor = make_pair(gastoTotalPersonaLolla(a), -1 * a);
     this->_rankingGastosPersonas.remove(valor);
     this->_rankingGastosPersonas.push(valor);
 }
 
 
-Nat lollapatuza::gastoTotalPersona(Persona a) const{
+Nat lollapatuza::gastoTotalPersonaLolla(Persona a) const{
     return _historialCompras.find(a)->second;
 }
 
 
-Persona lollapatuza::personaQueMasGasto() const{
+Persona lollapatuza::personaQueMasGastoLolla() const{
     return (this->_rankingGastosPersonas.top()).second * -1;
 }
 
@@ -88,37 +86,28 @@ Persona lollapatuza::personaQueMasGasto() const{
 //revisar esta para que devuelva el id de puesto
 //ahora esta devolviendo la posicion en el dicc
 
-IdPuesto lollapatuza::puestoMenorStock(Producto i) const{
+IdPuesto lollapatuza::puestoMenorStockLolla(Producto i) const{
     IdPuesto res = 0;
     Nat menorStock = 0;
     for (pair<IdPuesto, puestosDeComida> par : _puestos) { // Acá se rompe con el tipo de dato de par y el de _puestos
-        if (stockEnPuesto(par.first, i) < menorStock) {
+        if (stockEnPuestoLolla(par.first, i) < menorStock) {
             res = par.first;
-            menorStock = stockEnPuesto(par.first, i);
+            menorStock = stockEnPuestoLolla(par.first, i);
         }
     }
 
     return res;
-   /* Nat res = 0;
-    for (i = 0; i < this->_puestos.length() - 1; i++){
-        puestosDeComida<T> puesto     = _puestos[i];
-        puestosDeComida<T> puesto_sig = _puestos[i + 1];
-        if (puesto.stock[i] < puesto_sig.stock[i]){
-            res = i;
-        }
-    }
-    return res;*/
 }
 
 
-const set<Persona> & lollapatuza::personas() const {
+const set<Persona> & lollapatuza::personasLolla() const {
     return _personas;
 }
 
 
 //tiene que devolver las claves del diccionario _puestos
 
-set<IdPuesto> lollapatuza::puestos() const{
+set<IdPuesto> lollapatuza::puestosLolla() const{
     set<IdPuesto> claves = set<int>();
     for (pair<IdPuesto, puestosDeComida> par : this->_puestos) { // Acá se rompe con el tipo de dato de par y el de _puestos
         claves.insert(par.first);
@@ -127,20 +116,20 @@ set<IdPuesto> lollapatuza::puestos() const{
 }
 
 
-Nat lollapatuza::stockEnPuesto(IdPuesto idPuesto, const Producto &producto) const{
+Nat lollapatuza::stockEnPuestoLolla(IdPuesto idPuesto, const Producto &producto) const{
     puestosDeComida puesto = _puestos.find(idPuesto)->second;
     return puesto.obtenerStock(producto);
 }
 
 
-Nat lollapatuza::descuentoEnPuesto(IdPuesto idPuesto, const Producto &producto, Nat cantidad) const{
+Nat lollapatuza::descuentoEnPuestoLolla(IdPuesto idPuesto, const Producto &producto, Nat cantidad) const{
     puestosDeComida puesto = _puestos.find(idPuesto)->second;
     return puesto.obtenerDescuentoItem(producto, cantidad);
 }
 
 
 
-Nat lollapatuza::gastoEnPuesto(IdPuesto idPuesto, Persona persona) const{
+Nat lollapatuza::gastoEnPuestoLolla(IdPuesto idPuesto, Persona persona) const{
     puestosDeComida puesto = _puestos.find(idPuesto)->second;
     return puesto.gastoPersonaPuesto(persona);
 }

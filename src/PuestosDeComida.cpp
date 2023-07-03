@@ -1,21 +1,12 @@
-#include <list>
-#include <vector>
-#include <stack>
-#include <map>
-#include <queue>
-#include <set>
-#include <algorithm> // Todavía no sabemos si se puede usar
-
 #include "PuestosDeComida.h"
 
-puestosDeComida::puestosDeComida(aed2_Puesto puesto) {
-    _stock = puesto.stock;
-    _menu = puesto.menu;
-    _promociones = puesto.promociones;
+puestosDeComida::puestosDeComida(){}
+
+puestosDeComida::puestosDeComida(aed2_Puesto& puesto): _stock(puesto.stock), _menu(puesto.menu), _promociones(puesto.promociones) {
 
     //tenemos que recorrer todo el dicc _promociones
     //primero lo recorremos por producto, y luego vamos llenando los huecos:
-    for (pair<Producto, map<Cant, Descuento>> par : _promociones){
+    /*for (pair<Producto, map<Cant, Descuento>> par : _promociones){
         int prod = par.first;
         Nat ultimaCantDefinida = 0;
         //busco el maximo de las claves del dicc de promos para el producto actual
@@ -35,32 +26,7 @@ puestosDeComida::puestosDeComida(aed2_Puesto puesto) {
                 _promociones[prod][i] = ultimoDescDefinido;
             }
         }
-    }
-    
-    // map<int, vector<Nat>> promosDiccConArreglo;
-    // for (int i = 0; i < p.size(); i++) {
-    //     Nat ultimoDescuentoDefinido = 0;
-    //     vector<Nat> cantidadesPromoItem;
-    //     for (int j = 0; j < p[i].size(); j++) {
-    //         cantidadesPromoItem.push_back(p[i][j]);
-    //     }
-    //     Nat maxCant = cantidadesPromoItem[0];
-    //     for (int j = 1; j < cantidadesPromoItem.size(); j++){
-    //         if (cantidadesPromoItem[j] > maxCant){
-    //             maxCant = cantidadesPromoItem[j];
-    //         }
-    //     }
-    //     vector<Nat> arrDescuentos(maxCant, 0);
-    //     for (int k = 0; k < maxCant; k++){
-    //         for (int l = 0; l < cantidadesPromoItem.size(); l++) {
-    //             if (cantidadesPromoItem[l] = k){
-    //                 ultimoDescuentoDefinido = p[i][k];
-    //             }
-    //             arrDescuentos[k] = ultimoDescuentoDefinido;
-    //         }
-    //     }
-    //     promosDiccConArreglo[i] = arrDescuentos;
-    // }
+    }*/
 }
 
 puestosDeComida::~puestosDeComida(){}

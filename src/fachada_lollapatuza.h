@@ -1,8 +1,6 @@
 #ifndef FACHADA_LOLLAPATUZA_H
 #define FACHADA_LOLLAPATUZA_H
-
-
-#include "Lollapatuza.cpp"
+#include "Lollapatuza.h"
 
 
 class FachadaLollapatuza {
@@ -29,18 +27,7 @@ public:
     set<IdPuesto> idsDePuestos() const;
 
 private:
-    /*  TODO: Completar.
-
-        En la parte privada deben guardarse una instancia de su  modulo Lollapatuza.
-        Por ejemplo:
-
-        Lollapatuza lolla;
-
-    */
-
     lollapatuza _lolla;
-    //puestosDeComida *_puesto;
-
 };
 
 #endif

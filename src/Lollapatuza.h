@@ -1,9 +1,9 @@
 #ifndef TP_LOLLA_LOLLAPATUZA_H
 #define TP_LOLLA_LOLLAPATUZA_H
 
-//#include "tipos.h"
-#include "PuestosDeComida.cpp"
-#include <map>
+
+#include "PuestosDeComida.h"
+#include <set>
 
 using namespace std;
 
@@ -13,18 +13,18 @@ public:
     lollapatuza();
     lollapatuza(Puestos p , Personas a);
     ~lollapatuza();
-    void registrarCompra(Persona a, Producto p, IdPuesto id, Nat cant);
-    void hackear(Persona a, Producto p);
-    void actualizarHackeabilidad(Persona a, Producto p, IdPuesto id);
-    void actualizarRanking(Persona a);
-    Nat gastoTotalPersona(Persona a) const;
-    Nat stockEnPuesto(IdPuesto idPuesto, const Producto &producto) const;
-    Nat descuentoEnPuesto(IdPuesto idPuesto, const Producto &producto, Nat cantidad) const;
-    Nat gastoEnPuesto(IdPuesto idPuesto, Persona persona) const;
-    Persona personaQueMasGasto() const;
-    IdPuesto puestoMenorStock(Producto i) const;
-    const set<Persona> & personas() const;
-    set<IdPuesto> puestos() const;
+    void registrarCompraLolla(Persona a, Producto p, IdPuesto id, Nat cant);
+    void hackearLolla(Persona a, Producto p);
+    void actualizarHackeabilidadLolla(Persona a, Producto p, IdPuesto id);
+    void actualizarRankingLolla(Persona a);
+    Nat gastoTotalPersonaLolla(Persona a) const;
+    Nat stockEnPuestoLolla(IdPuesto idPuesto, const Producto &producto) const;
+    Nat descuentoEnPuestoLolla(IdPuesto idPuesto, const Producto &producto, Nat cantidad) const;
+    Nat gastoEnPuestoLolla(IdPuesto idPuesto, Persona persona) const;
+    Persona personaQueMasGastoLolla() const;
+    IdPuesto puestoMenorStockLolla(Producto i) const;
+    const set<Persona> & personasLolla() const;
+    set<IdPuesto> puestosLolla() const;
 
 private:
     map<int , puestosDeComida> _puestos;  //map<int, puesto>
@@ -33,25 +33,7 @@ private:
     map<Persona, Nat> _historialCompras;
     map<Persona, map<Producto, priority_queue<IdPuesto>>> _puestosHackeables; //veamos como hacer el minHeap => -1 vs comparator
 
-    /* para comparar dos personas
-    template<typename T>
-    class ranking {
-        public:
-            bool operator() (const Persona& a1, const Persona& a2){
-                if (l.gastoTotalPersona(a1) > l.gastoTotalPersona(a2)) {
-                    return true;
-                } else if (l.gastoTotalPersona(a1) == l.gastoTotalPersona(a2)) {
-                    return a1 > a2;
-                } else {
-                    return false;
-                }
-            };
-        private:
-            lollapatuza l; // Según busqué, este error es por la "declaración anticipada" de lollapatuza.
-                           // Como solución habría que mover toda esta clase fuera de la clase lollapatuza
-    };*/
     //me da una cola de prioridad con la operacion borrar cualquier elemento de la cola
-    
     class colaRankingPersonas : public priority_queue<pair<Nat, Persona>> {
     public:
         bool remove(const pair<Nat, Persona>& value) {
