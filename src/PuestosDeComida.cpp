@@ -6,7 +6,7 @@ puestosDeComida::puestosDeComida(aed2_Puesto& puesto): _stock(puesto.stock), _me
 
     //tenemos que recorrer todo el dicc _promociones
     //primero lo recorremos por producto, y luego vamos llenando los huecos:
-    /*for (pair<Producto, map<Cant, Descuento>> par : _promociones){
+    for (pair<Producto, map<Cant, Descuento>> par : _promociones){
         int prod = par.first;
         Nat ultimaCantDefinida = 0;
         //busco el maximo de las claves del dicc de promos para el producto actual
@@ -26,7 +26,7 @@ puestosDeComida::puestosDeComida(aed2_Puesto& puesto): _stock(puesto.stock), _me
                 _promociones[prod][i] = ultimoDescDefinido;
             }
         }
-    }*/
+    }
 }
 
 puestosDeComida::~puestosDeComida(){}
@@ -36,7 +36,22 @@ Nat puestosDeComida::obtenerStock(Producto p){
 }
 
 Nat puestosDeComida::obtenerDescuentoItem(Producto p, Nat cant){
-    return this-> _promociones[p][cant];
+
+    int descuento = 0;
+
+    if (_promociones.count(p)  == 1) {
+
+        if (_promociones[p].count(cant)  == 1  )   {
+
+            descuento = this-> _promociones[p][cant];
+
+        } else {
+            descuento = obtenerDescuentoItem(p,cant - 1);
+
+        }
+    }
+
+    return descuento;
 }
 
 Nat puestosDeComida::gastoPersonaPuesto(Persona a){
@@ -56,10 +71,14 @@ Nat puestosDeComida::cantVentasSinPromo(Producto p, Persona a){
 
 void puestosDeComida::modificarStock(bool reponer, Producto p, Nat cant){
 
+     int stockViejo = _stock.find(p)->second;
+
+    _stock.erase(p);
+
     if (reponer) {
-        _stock[p] += cant;
+        _stock.insert({p,stockViejo + cant});
     } else {
-        _stock[p] -= cant;
+        _stock.insert({p,stockViejo - cant});
     }
 }
 
@@ -68,7 +87,8 @@ void puestosDeComida::modificarVentas(bool reponer, Producto p, Nat cant, Person
 
     Nat  ventaVieja = gastoPersonaPuesto(a);
     Nat descuento = obtenerDescuentoItem(p,cant);
-    Nat gastado = (_menu[p] * cant) * ((100 - descuento)/100); //esto me da la division entera
+    float descPorcent = static_cast<float>(descuento) / 100.0f;
+    Nat gastado = (_menu[p] * cant) * (1-descPorcent); //esto me da la division entera
 
     if (reponer) {
         Nat ventaNueva = ventaVieja + gastado;
@@ -100,11 +120,6 @@ void puestosDeComida::modificarVentas(bool reponer, Producto p, Nat cant, Person
         }
     }
 
-    // if (reponer) {
-    //     _ventas[p] = obtenerStock(p) + cant;
-    // } else {
-
-    // }
 }
 
 void puestosDeComida::actualizarHackeabilidadPuesto(Persona a) {

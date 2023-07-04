@@ -15,6 +15,8 @@ lollapatuza::lollapatuza(Puestos p , Personas a) {
     //inicializo los gastos por persona en 0
     for (Persona persona : a) {
         _historialCompras[persona] = 0;
+        _rankingGastosPersonas.push(make_pair(0,persona*-1));
+
     }
 
 }
@@ -22,11 +24,17 @@ lollapatuza::lollapatuza(Puestos p , Personas a) {
 lollapatuza::~lollapatuza(){}
 
 void lollapatuza::registrarCompraLolla(Persona a, Producto p, IdPuesto id, Nat cant){
-    puestosDeComida puesto = _puestos[id];
+    puestosDeComida &puesto = _puestos[id];
     puesto.modificarStock(false, p, cant);
     puesto.modificarVentas(true, p, cant, a);
     Nat descuento = puesto.obtenerDescuentoItem(p, cant);
-    Nat gastado = puesto.valorItemEnMenu(p) * cant;
+    float descPorcent = static_cast<float>(descuento) / 100.0f;
+    Nat gastado = 0;
+    if (descuento == 0 ) {
+         gastado = puesto.valorItemEnMenu(p) * cant;
+    } else {
+        gastado = (puesto.valorItemEnMenu(p) * cant)*(1-descPorcent);
+    }
     _historialCompras[a] += gastado;
     if (descuento == 0){
         this->_puestosHackeables[a][p].push(-1* id); //multiplicaba por -1 porque asi armamos el minHeap
@@ -36,7 +44,7 @@ void lollapatuza::registrarCompraLolla(Persona a, Producto p, IdPuesto id, Nat c
 
 void lollapatuza::hackearLolla(Persona a, Producto p){
     int puid = -1 * _puestosHackeables[a][p].top(); //multiplicaba por -1 para obtener el id original
-    puestosDeComida puesto = _puestos[puid];
+    puestosDeComida &puesto = _puestos[puid];
     puesto.modificarStock(true, p, 1);
     puesto.modificarVentas(false, p, 1, a);
 
@@ -88,8 +96,14 @@ Persona lollapatuza::personaQueMasGastoLolla() const{
 
 IdPuesto lollapatuza::puestoMenorStockLolla(Producto i) const{
     IdPuesto res = 0;
-    Nat menorStock = 0;
+    Nat menorStock = 10000; // Corregir este numero
+    bool primeraIt = true;
     for (pair<IdPuesto, puestosDeComida> par : _puestos) { // Acá se rompe con el tipo de dato de par y el de _puestos
+        if (primeraIt){
+            res = par.first;
+            menorStock = stockEnPuestoLolla(par.first, i);
+            primeraIt = false;
+        }
         if (stockEnPuestoLolla(par.first, i) < menorStock) {
             res = par.first;
             menorStock = stockEnPuestoLolla(par.first, i);
