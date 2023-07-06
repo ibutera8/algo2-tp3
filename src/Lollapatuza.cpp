@@ -15,8 +15,7 @@ lollapatuza::lollapatuza(Puestos p , Personas a) {
     //inicializo los gastos por persona en 0
     for (Persona persona : a) {
         _historialCompras[persona] = 0;
-        _rankingGastosPersonas.push(make_pair(0,persona*-1));
-
+        _rankingGastosPersonas.push(make_pair(0, persona * (-1)));
     }
 
 }
@@ -24,34 +23,31 @@ lollapatuza::lollapatuza(Puestos p , Personas a) {
 lollapatuza::~lollapatuza(){}
 
 void lollapatuza::registrarCompraLolla(Persona a, Producto p, IdPuesto id, Nat cant){
-    puestosDeComida &puesto = _puestos[id];
+    puestosDeComida& puesto = _puestos[id];
     puesto.modificarStock(false, p, cant);
     puesto.modificarVentas(true, p, cant, a);
     Nat descuento = puesto.obtenerDescuentoItem(p, cant);
     float descPorcent = static_cast<float>(descuento) / 100.0f;
-    Nat gastado = 0;
-    if (descuento == 0 ) {
-         gastado = puesto.valorItemEnMenu(p) * cant;
-    } else {
-        gastado = (puesto.valorItemEnMenu(p) * cant)*(1-descPorcent);
-    }
+    Nat gastado = (puesto.valorItemEnMenu(p) * cant) * (1 - descPorcent);
+    int gastoViejo = _historialCompras[a];
     _historialCompras[a] += gastado;
     if (descuento == 0){
         this->_puestosHackeables[a][p].push(-1* id); //multiplicaba por -1 porque asi armamos el minHeap
     }
-    this->actualizarRankingLolla(a);
+    this->actualizarRankingLolla(a, gastoViejo);
 }
 
 void lollapatuza::hackearLolla(Persona a, Producto p){
     int puid = -1 * _puestosHackeables[a][p].top(); //multiplicaba por -1 para obtener el id original
-    puestosDeComida &puesto = _puestos[puid];
+    puestosDeComida& puesto = _puestos[puid];
     puesto.modificarStock(true, p, 1);
     puesto.modificarVentas(false, p, 1, a);
 
     int gastado = puesto.valorItemEnMenu(p);
+    int gastoViejo = _historialCompras[a];
     _historialCompras[a] -= gastado;
+    this->actualizarRankingLolla(a, gastoViejo);
     this->actualizarHackeabilidadLolla(a, p, puid);
-    this->actualizarRankingLolla(a);
 }
 
 void lollapatuza::actualizarHackeabilidadLolla(Persona a, Producto p, IdPuesto pid){
@@ -74,9 +70,10 @@ void lollapatuza::actualizarHackeabilidadLolla(Persona a, Producto p, IdPuesto p
     puesto.actualizarHackeabilidadPuesto(a);
 }
 
-void lollapatuza::actualizarRankingLolla(Persona a){
+void lollapatuza::actualizarRankingLolla(Persona a, int gastoViejo){
     pair<Nat, Persona> valor = make_pair(gastoTotalPersonaLolla(a), -1 * a);
-    this->_rankingGastosPersonas.remove(valor);
+    pair<Nat, Persona> valorViejo = make_pair(gastoViejo, -1 * a);
+    this->_rankingGastosPersonas.remove(valorViejo);
     this->_rankingGastosPersonas.push(valor);
 }
 
@@ -94,9 +91,9 @@ Persona lollapatuza::personaQueMasGastoLolla() const{
 //revisar esta para que devuelva el id de puesto
 //ahora esta devolviendo la posicion en el dicc
 
-IdPuesto lollapatuza::puestoMenorStockLolla(Producto i) const{
+IdPuesto lollapatuza::puestoMenorStockLolla(Producto i) const {
     IdPuesto res = 0;
-    Nat menorStock = 10000; // Corregir este numero
+    Nat menorStock = 0;
     bool primeraIt = true;
     for (pair<IdPuesto, puestosDeComida> par : _puestos) { // Acá se rompe con el tipo de dato de par y el de _puestos
         if (primeraIt){
@@ -109,9 +106,11 @@ IdPuesto lollapatuza::puestoMenorStockLolla(Producto i) const{
             menorStock = stockEnPuestoLolla(par.first, i);
         }
     }
-
     return res;
 }
+
+
+
 
 
 const set<Persona> & lollapatuza::personasLolla() const {

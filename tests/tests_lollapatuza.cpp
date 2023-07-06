@@ -673,3 +673,134 @@ TEST_F(LollaTest, hackear_altera_puesto_menor_id) {
     EXPECT_EQ(l.gastoEnPuesto(7, 9), 0);
     EXPECT_EQ(l.idsDePuestos(), idsPuestos);
 }
+
+
+TEST_F(LollaTest, vender_con_y_sin_descuento_y_hackear) {
+    FachadaLollapatuza l(personas, puestos);
+
+    l.registrarCompra(2, 5, 13, 2);  // Venta sin descuento
+    l.registrarCompra(9, 5, 7, 7);  // Venta sin descuento
+    l.registrarCompra(9, 7, 10, 7); // Venta con descuento
+
+    EXPECT_EQ(l.gastoTotal(2), 32500);
+    EXPECT_EQ(l.gastoTotal(4), 0);
+    EXPECT_EQ(l.gastoTotal(8), 0);
+    EXPECT_EQ(l.gastoTotal(9), 35500);
+    EXPECT_EQ(l.mayorGastador(), 9);
+    EXPECT_EQ(l.menorStock(3), 6);
+    EXPECT_EQ(l.menorStock(4), 2);
+    EXPECT_EQ(l.menorStock(5), 7);
+    EXPECT_EQ(l.menorStock(7), 6);
+    EXPECT_EQ(l.personas(), personas);
+
+    EXPECT_EQ(l.stockEnPuesto(2, 3), 10);
+    EXPECT_EQ(l.stockEnPuesto(2, 4), 5);
+    EXPECT_EQ(l.stockEnPuesto(2, 5), 17);
+    EXPECT_EQ(l.stockEnPuesto(2, 7), 10);
+
+    for (const pair<const Producto, Nat>& s : stock6) {
+        EXPECT_EQ(l.stockEnPuesto(6, s.first), s.second);
+    }
+
+    EXPECT_EQ(l.stockEnPuesto(7, 3), 20);
+    EXPECT_EQ(l.stockEnPuesto(7, 4), 20);
+    EXPECT_EQ(l.stockEnPuesto(7, 5), 13);
+    EXPECT_EQ(l.stockEnPuesto(7, 7), 10);
+
+    EXPECT_EQ(l.gastoEnPuesto(2, 2), 32500);
+    EXPECT_EQ(l.gastoEnPuesto(2, 4), 0);
+    EXPECT_EQ(l.gastoEnPuesto(2, 8), 0);
+    EXPECT_EQ(l.gastoEnPuesto(2, 9), 0);
+
+    for (const Persona& p : personas) {
+        EXPECT_EQ(l.gastoEnPuesto(6, p), 0);
+    }
+
+    EXPECT_EQ(l.gastoEnPuesto(7, 2), 0);
+    EXPECT_EQ(l.gastoEnPuesto(7, 4), 0);
+    EXPECT_EQ(l.gastoEnPuesto(7, 8), 0);
+    EXPECT_EQ(l.gastoEnPuesto(7, 9), 35500);
+
+    EXPECT_EQ(l.descuentoEnPuesto(2, 7, 2), 0);
+    EXPECT_EQ(l.descuentoEnPuesto(2, 7, 3), 20);
+    EXPECT_EQ(l.descuentoEnPuesto(2, 7, 4), 20);
+    EXPECT_EQ(l.descuentoEnPuesto(2, 7, 5), 20);
+    EXPECT_EQ(l.descuentoEnPuesto(2, 7, 6), 25);
+    EXPECT_EQ(l.descuentoEnPuesto(2, 7, 7), 25);
+
+    EXPECT_EQ(l.descuentoEnPuesto(6, 4, 3), 0);
+    EXPECT_EQ(l.descuentoEnPuesto(6, 4, 4), 15);
+    EXPECT_EQ(l.descuentoEnPuesto(6, 4, 5), 15);
+
+    EXPECT_EQ(l.descuentoEnPuesto(7, 3, 4), 0);
+    EXPECT_EQ(l.descuentoEnPuesto(7, 3, 5), 30);
+    EXPECT_EQ(l.descuentoEnPuesto(7, 3, 6), 30);
+    EXPECT_EQ(l.descuentoEnPuesto(7, 7, 1), 0);
+    EXPECT_EQ(l.descuentoEnPuesto(7, 7, 2), 10);
+    EXPECT_EQ(l.descuentoEnPuesto(7, 7, 3), 10);
+
+    EXPECT_EQ(l.idsDePuestos(), idsPuestos);
+
+    // Intento de hackear descuento
+    l.hackear(9, 5);
+    l.hackear(9, 5);
+
+    EXPECT_EQ(l.gastoTotal(2), 32500);
+    EXPECT_EQ(l.gastoTotal(4), 0);
+    EXPECT_EQ(l.gastoTotal(8), 0);
+    EXPECT_EQ(l.gastoTotal(9), 30500);
+    EXPECT_EQ(l.mayorGastador(), 2);
+    EXPECT_EQ(l.menorStock(3), 6);
+    EXPECT_EQ(l.menorStock(4), 2);
+    EXPECT_EQ(l.menorStock(5), 7);
+    EXPECT_EQ(l.menorStock(7), 6);
+    EXPECT_EQ(l.personas(), personas);
+
+    EXPECT_EQ(l.stockEnPuesto(2, 3), 10);
+    EXPECT_EQ(l.stockEnPuesto(2, 4), 5);
+    EXPECT_EQ(l.stockEnPuesto(2, 5), 17);
+    EXPECT_EQ(l.stockEnPuesto(2, 7), 10);
+
+    for (const pair<const Producto, Nat>& s : stock6) {
+        EXPECT_EQ(l.stockEnPuesto(6, s.first), s.second);
+    }
+
+    EXPECT_EQ(l.stockEnPuesto(7, 3), 20);
+    EXPECT_EQ(l.stockEnPuesto(7, 4), 20);
+    EXPECT_EQ(l.stockEnPuesto(7, 5), 15);
+    EXPECT_EQ(l.stockEnPuesto(7, 7), 10);
+
+    EXPECT_EQ(l.gastoEnPuesto(2, 2), 32500);
+    EXPECT_EQ(l.gastoEnPuesto(2, 4), 0);
+    EXPECT_EQ(l.gastoEnPuesto(2, 8), 0);
+    EXPECT_EQ(l.gastoEnPuesto(2, 9), 0);
+
+    for (const Persona& p : personas) {
+        EXPECT_EQ(l.gastoEnPuesto(6, p), 0);
+    }
+
+    EXPECT_EQ(l.gastoEnPuesto(7, 2), 0);
+    EXPECT_EQ(l.gastoEnPuesto(7, 4), 0);
+    EXPECT_EQ(l.gastoEnPuesto(7, 8), 0);
+    EXPECT_EQ(l.gastoEnPuesto(7, 9), 30500);
+
+    EXPECT_EQ(l.descuentoEnPuesto(2, 7, 2), 0);
+    EXPECT_EQ(l.descuentoEnPuesto(2, 7, 3), 20);
+    EXPECT_EQ(l.descuentoEnPuesto(2, 7, 4), 20);
+    EXPECT_EQ(l.descuentoEnPuesto(2, 7, 5), 20);
+    EXPECT_EQ(l.descuentoEnPuesto(2, 7, 6), 25);
+    EXPECT_EQ(l.descuentoEnPuesto(2, 7, 7), 25);
+
+    EXPECT_EQ(l.descuentoEnPuesto(6, 4, 3), 0);
+    EXPECT_EQ(l.descuentoEnPuesto(6, 4, 4), 15);
+    EXPECT_EQ(l.descuentoEnPuesto(6, 4, 5), 15);
+
+    EXPECT_EQ(l.descuentoEnPuesto(7, 3, 4), 0);
+    EXPECT_EQ(l.descuentoEnPuesto(7, 3, 5), 30);
+    EXPECT_EQ(l.descuentoEnPuesto(7, 3, 6), 30);
+    EXPECT_EQ(l.descuentoEnPuesto(7, 7, 1), 0);
+    EXPECT_EQ(l.descuentoEnPuesto(7, 7, 2), 10);
+    EXPECT_EQ(l.descuentoEnPuesto(7, 7, 3), 10);
+
+    EXPECT_EQ(l.idsDePuestos(), idsPuestos);
+}

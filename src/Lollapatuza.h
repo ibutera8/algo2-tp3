@@ -16,7 +16,7 @@ public:
     void registrarCompraLolla(Persona a, Producto p, IdPuesto id, Nat cant);
     void hackearLolla(Persona a, Producto p);
     void actualizarHackeabilidadLolla(Persona a, Producto p, IdPuesto id);
-    void actualizarRankingLolla(Persona a);
+    void actualizarRankingLolla(Persona a, int gastoViejo);
     Nat gastoTotalPersonaLolla(Persona a) const;
     Nat stockEnPuestoLolla(IdPuesto idPuesto, const Producto &producto) const;
     Nat descuentoEnPuestoLolla(IdPuesto idPuesto, const Producto &producto, Nat cantidad) const;
