@@ -36,22 +36,17 @@ Nat puestosDeComida::obtenerStock(Producto p){
 }
 
 Nat puestosDeComida::obtenerDescuentoItem(Producto p, Nat cant){
-
-    int descuento = 0;
-
-    if (_promociones.count(p)  == 1) {
-
-        if (_promociones[p].count(cant)  == 1  )   {
-
-            descuento = this-> _promociones[p][cant];
-
+    Nat res;
+    if (_promociones.count(p) == 1) {
+        if (_promociones[p].count(cant) == 1) {
+            res = this->_promociones[p][cant];
         } else {
-            descuento = obtenerDescuentoItem(p,cant - 1);
-
+            res = obtenerDescuentoItem(p, cant - 1);
         }
+        return res;
+    } else {
+        return 0;
     }
-
-    return descuento;
 }
 
 Nat puestosDeComida::gastoPersonaPuesto(Persona a){
@@ -70,15 +65,10 @@ Nat puestosDeComida::cantVentasSinPromo(Producto p, Persona a){
 
 
 void puestosDeComida::modificarStock(bool reponer, Producto p, Nat cant){
-
-     int stockViejo = _stock.find(p)->second;
-
-    _stock.erase(p);
-
     if (reponer) {
-        _stock.insert({p,stockViejo + cant});
+        _stock[p] += cant;
     } else {
-        _stock.insert({p,stockViejo - cant});
+        _stock[p] -= cant;
     }
 }
 
@@ -88,7 +78,7 @@ void puestosDeComida::modificarVentas(bool reponer, Producto p, Nat cant, Person
     Nat  ventaVieja = gastoPersonaPuesto(a);
     Nat descuento = obtenerDescuentoItem(p,cant);
     float descPorcent = static_cast<float>(descuento) / 100.0f;
-    Nat gastado = (_menu[p] * cant) * (1-descPorcent); //esto me da la division entera
+    Nat gastado = (_menu[p] * cant) * (1 - descPorcent); //esto me da la division entera
 
     if (reponer) {
         Nat ventaNueva = ventaVieja + gastado;
@@ -120,6 +110,11 @@ void puestosDeComida::modificarVentas(bool reponer, Producto p, Nat cant, Person
         }
     }
 
+    // if (reponer) {
+    //     _ventas[p] = obtenerStock(p) + cant;
+    // } else {
+
+    // }
 }
 
 void puestosDeComida::actualizarHackeabilidadPuesto(Persona a) {

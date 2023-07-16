@@ -14,6 +14,16 @@ protected:
     aed2_Puesto puesto2, puesto6, puesto7;
     map<IdPuesto, aed2_Puesto> puestos;
 
+    // Para nuestros tests
+
+    Menu menuN;
+    set<Persona> personasN;
+    set<IdPuesto> idsPuestosN;
+    Stock stockN1, stockN2, stockN3;
+    Promociones descuentosN;
+    aed2_Puesto puestoN1, puestoN2, puestoN3;
+    map<IdPuesto, aed2_Puesto> puestosN;
+
     void SetUp() {
         menu = {{3, 500}, {4, 1000}, {5, 2500}, {7, 2000}};
         personas = {2, 4, 8, 9};
@@ -30,6 +40,20 @@ protected:
         puesto6 = {stock6, descuentos6, menu};
         puesto7 = {stock7, descuentos7, menu};
         puestos = {{2, puesto2}, {6, puesto6}, {7, puesto7}};
+
+        // para nuestros tests
+
+        menuN  = {{1, 1}, {2, 10}, {3, 100}};
+        personas = {1, 2, 3};
+        idsPuestosN = {10, 20, 30};
+        stockN1 = {{1, 100}, {2, 0}, {3, 4}};
+        stockN2 = {{1, 100}, {2, 100}, {3, 100}};
+        stockN3 = {{1, 0}, {2, 2}, {3, 2}};
+        descuentosN = {{2, {{2, 5}, {3, 10}}}};
+        puestoN1 = {stockN1, descuentosN, menuN};
+        puestoN2 = {stockN2, descuentosN, menuN};
+        puestoN3 = {stockN3, descuentosN, menuN};
+        puestosN = {{10, puestoN1}, {20, puestoN2}, {30, puestoN3}};
     }
 };
 
@@ -674,7 +698,6 @@ TEST_F(LollaTest, hackear_altera_puesto_menor_id) {
     EXPECT_EQ(l.idsDePuestos(), idsPuestos);
 }
 
-
 TEST_F(LollaTest, vender_con_y_sin_descuento_y_hackear) {
     FachadaLollapatuza l(personas, puestos);
 
@@ -803,4 +826,32 @@ TEST_F(LollaTest, vender_con_y_sin_descuento_y_hackear) {
     EXPECT_EQ(l.descuentoEnPuesto(7, 7, 3), 10);
 
     EXPECT_EQ(l.idsDePuestos(), idsPuestos);
+}
+
+
+TEST_F(LollaTest, completito) {
+    FachadaLollapatuza l(personasN, puestosN);
+    l.registrarCompra(1, 1, 100, 10);
+    l.registrarCompra(3, 3, 1, 30);
+    EXPECT_EQ(l.mayorGastador(), 1);
+
+    l.hackear(1, 1); // Luego de hackear se debe cambiar la persona que mas gasto
+
+    EXPECT_EQ(l.mayorGastador(),3);
+    EXPECT_EQ(l.stockEnPuesto(10,1),1); // antes de hackear era 0 el stock y ahora despues de hackear , aumenta en uno
+
+    l.registrarCompra(1, 1, 1, 10);
+    EXPECT_EQ(l.mayorGastador(),1);
+    EXPECT_EQ(l.stockEnPuesto(10,1),0);
+    EXPECT_EQ(l.menorStock(1),10); // Esta bien , me devuelve el 10 porque el puesto 30 tiene mayor id
+
+    l.registrarCompra(2, 2, 10, 20);
+    EXPECT_EQ(l.mayorGastador(),1);
+    l.registrarCompra(2,1,11,20);
+    EXPECT_EQ(l.gastoEnPuesto(20,2),101);
+    EXPECT_EQ(l.mayorGastador(),2);
+
+    l.hackear(2,1);
+    EXPECT_EQ(l.mayorGastador(),1);
+
 }

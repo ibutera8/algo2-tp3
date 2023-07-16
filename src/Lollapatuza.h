@@ -3,6 +3,7 @@
 
 
 #include "PuestosDeComida.h"
+#include "heap.h"
 #include <set>
 
 using namespace std;
@@ -31,31 +32,29 @@ private:
     set<IdPuesto> _conjPuestos;
     Personas _personas; //conj(int)
     map<Persona, Nat> _historialCompras;
-    map<Persona, map<Producto, priority_queue<IdPuesto>>> _puestosHackeables; //veamos como hacer el minHeap => -1 vs comparator
+    map<Persona, map<Producto, PriorityQueue<IdPuesto>>> _puestosHackeables; //veamos como hacer el minHeap => -1 vs comparator
 
     //me da una cola de prioridad con la operacion borrar cualquier elemento de la cola
-    class colaRankingPersonas : public priority_queue<pair<Nat, Persona>> {
+    class colaRankingPersonas : public PriorityQueue<std::pair<Nat, Persona>, std::vector<std::pair<Nat, Persona>>, TupleComparator> {
     public:
-        bool remove(const pair<Nat, Persona>& value) {
-            auto it = find(this->c.begin(), this->c.end(), value);
+        bool remove(const std::pair<Nat, Persona>& value) {
+            auto it = std::find(begin(), end(), value);
 
-            if (it == this->c.end()) {
+            if (it == end()) {
                 return false;
             }
-            if (it == this->c.begin()) {
-                // sacamos el ultimo
-                this->pop();
-            }
-            else {
-                // removemos y volvemos a armar el heap
-                this->c.erase(it);
-                make_heap(this->c.begin(), this->c.end(), this->comp);
+            if (it == begin()) {
+                // Sacamos el último
+                pop();
+            } else {
+                // Removemos el elemento y reconstruimos el heap
+                erase(it);
             }
             return true;
         }
     };
-
     colaRankingPersonas _rankingGastosPersonas;
+
 };
 
 //#include "Lollapatuza.cpp"
